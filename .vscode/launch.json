@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "YouHaveToSay.Api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-youhavetosay-api",
+            "program": "${workspaceFolder}/src/YouHaveToSay.Api/bin/Debug/net9.0/YouHaveToSay.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/YouHaveToSay.Api",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5106"
+            }
+        }
+    ]
+}

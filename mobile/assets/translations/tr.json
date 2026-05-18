@@ -1,0 +1,21 @@
+{
+  "app_name": "You Have To Say",
+  "sign_in": "Giriş Yap",
+  "sign_up": "Kayıt Ol",
+  "email": "E-posta",
+  "password": "Şifre",
+  "email_required": "E-posta gerekli",
+  "password_required": "Şifre gerekli",
+  "password_min_length": "Şifre en az 6 karakter olmalı",
+  "auth_error": "Giriş başarısız. Bilgilerinizi kontrol edin.",
+  "loading": "Yükleniyor...",
+  "vote_success": "Oyunuz kaydedildi!",
+  "no_more_polls": "Oylayacak başka anket kalmadı.",
+  "poll_load_error": "Anket yüklenemedi. Tekrar deneyin.",
+  "vote_error": "Oy gönderilemedi. Tekrar deneyin.",
+  "retry": "Tekrar Dene",
+  "sign_out": "Çıkış Yap",
+  "language": "Dil",
+  "turkish": "Türkçe",
+  "english": "English"
+}

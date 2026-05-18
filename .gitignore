@@ -1,0 +1,33 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.db
+*.db-shm
+*.db-wal
+
+## IDE
+.idea/
+*.swp
+
+## Environment
+.env
+.env.*
+firebase-credentials.json
+**/firebase-credentials*.json
+
+## OS
+.DS_Store
+
+## Flutter
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/**/Generated.xcconfig
+mobile/**/flutter_export_environment.sh
+mobile/**/Pods/
+mobile/.pub-cache/
+mobile/**/ephemeral/

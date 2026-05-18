@@ -1,0 +1,21 @@
+{
+  "app_name": "You Have To Say",
+  "sign_in": "Sign In",
+  "sign_up": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "email_required": "Email is required",
+  "password_required": "Password is required",
+  "password_min_length": "Password must be at least 6 characters",
+  "auth_error": "Sign in failed. Please check your credentials.",
+  "loading": "Loading...",
+  "vote_success": "Your vote has been recorded!",
+  "no_more_polls": "No more polls available.",
+  "poll_load_error": "Could not load poll. Please try again.",
+  "vote_error": "Could not submit vote. Please try again.",
+  "retry": "Retry",
+  "sign_out": "Sign Out",
+  "language": "Language",
+  "turkish": "Türkçe",
+  "english": "English"
+}
