@@ -58,7 +58,8 @@ public class DatabaseSchemaTests
         {
             Id = pollId,
             QuestionTr = "Test sorusu?",
-            QuestionEn = "Test question?"
+            QuestionEn = "Test question?",
+            Category = "test"
         });
 
         context.PollOptions.AddRange(

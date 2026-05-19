@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using YouHaveToSay.Application.Auth.Interfaces;
+using YouHaveToSay.Application.Comparisons.Interfaces;
 using YouHaveToSay.Application.Polls.Interfaces;
 using YouHaveToSay.Infrastructure.Auth;
+using YouHaveToSay.Infrastructure.Comparisons;
 using YouHaveToSay.Infrastructure.Options;
 using YouHaveToSay.Infrastructure.Persistence;
 using YouHaveToSay.Infrastructure.Polls;
@@ -41,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
+        services.AddScoped<IComparisonService, ComparisonService>();
 
         return services;
     }

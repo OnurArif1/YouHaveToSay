@@ -7,8 +7,10 @@ import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/screens/auth_screen.dart';
+import 'features/comparisons/presentation/bloc/comparison_feed_bloc.dart';
+import 'features/comparisons/presentation/comparison_feed_screen.dart';
+import 'features/comparisons/presentation/widgets/feed_background.dart';
 import 'features/polls/presentation/bloc/poll_bloc.dart';
-import 'features/polls/presentation/screens/poll_screen.dart';
 
 class YouHaveToSayApp extends StatelessWidget {
   const YouHaveToSayApp({super.key});
@@ -21,7 +23,7 @@ class YouHaveToSayApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'app_name'.tr(),
-          theme: AppTheme.light(),
+          theme: AppTheme.app(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
@@ -34,6 +36,7 @@ class YouHaveToSayApp extends StatelessWidget {
             create: (_) => getIt<AuthBloc>()..add(const AuthStarted()),
           ),
           BlocProvider(create: (_) => getIt<PollBloc>()),
+          BlocProvider(create: (_) => getIt<ComparisonFeedBloc>()),
         ],
         child: const _RootRouter(),
       ),
@@ -51,10 +54,13 @@ class _RootRouter extends StatelessWidget {
         switch (state.status) {
           case AuthStatus.unknown:
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              backgroundColor: Colors.transparent,
+              body: FeedBackground(
+                child: Center(child: CircularProgressIndicator()),
+              ),
             );
           case AuthStatus.authenticated:
-            return const PollScreen();
+            return const ComparisonFeedScreen();
           case AuthStatus.unauthenticated:
             return const AuthScreen();
         }

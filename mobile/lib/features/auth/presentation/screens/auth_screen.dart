@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/app_config.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../comparisons/presentation/widgets/feed_background.dart';
 import '../bloc/auth_bloc.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -106,7 +108,9 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: FeedBackground(
+        child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -137,6 +141,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             style: TextStyle(
                               fontSize: 28.sp,
                               fontWeight: FontWeight.bold,
+                              color: AppColors.title,
                             ),
                           ),
                           SizedBox(height: 8.h),
@@ -145,7 +150,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 15.sp,
-                              color: Colors.grey.shade600,
+                              color: AppColors.subtitle,
                             ),
                           ),
                           SizedBox(height: 48.h),
@@ -162,8 +167,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: _canUseGoogle
-                                  ? Colors.grey.shade600
-                                  : Colors.orange.shade800,
+                                  ? AppColors.muted
+                                  : AppColors.accentPink,
                             ),
                           ),
                           if (!_useDevAuth) ...[
@@ -171,19 +176,22 @@ class _AuthScreenState extends State<AuthScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Divider(color: Colors.grey.shade400),
+                                  child: Divider(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                  ),
                                 ),
                                 Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 12.w),
                                   child: Text(
                                     'or'.tr(),
-                                    style:
-                                        TextStyle(color: Colors.grey.shade600),
+                                    style: const TextStyle(color: AppColors.muted),
                                   ),
                                 ),
                                 Expanded(
-                                  child: Divider(color: Colors.grey.shade400),
+                                  child: Divider(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                  ),
                                 ),
                               ],
                             ),
@@ -197,7 +205,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 12.sp,
-                                  color: Colors.orange.shade800,
+                                  color: AppColors.accentPink,
                                 ),
                               ),
                             ),
@@ -307,7 +315,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('language'.tr()),
+                              Text(
+                                'language'.tr(),
+                                style: const TextStyle(color: AppColors.subtitle),
+                              ),
                               SizedBox(width: 8.w),
                               DropdownButton<String>(
                                 value: context.locale.languageCode,
@@ -341,6 +352,7 @@ class _AuthScreenState extends State<AuthScreen> {
           },
         ),
       ),
+      ),
     );
   }
 }
@@ -358,14 +370,6 @@ class _GoogleSignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: isLoading ? null : onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: Size.fromHeight(52.h),
-        backgroundColor: Colors.white,
-        side: BorderSide(color: Colors.grey.shade300),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-      ),
       child: isLoading
           ? SizedBox(
               height: 22.h,
@@ -378,7 +382,7 @@ class _GoogleSignInButton extends StatelessWidget {
                 Icon(
                   Icons.g_mobiledata,
                   size: 28.sp,
-                  color: Colors.red.shade600,
+                  color: AppColors.accentPink,
                 ),
                 SizedBox(width: 12.w),
                 Text(
@@ -386,7 +390,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.title,
                   ),
                 ),
               ],

@@ -10,6 +10,8 @@ public class Poll : AuditableEntity
 
     public string QuestionEn { get; set; } = null!;
 
+    public string Category { get; set; } = string.Empty;
+
     public ICollection<PollOption> Options { get; set; } = new List<PollOption>();
 
     public ICollection<Vote> Votes { get; set; } = new List<Vote>();

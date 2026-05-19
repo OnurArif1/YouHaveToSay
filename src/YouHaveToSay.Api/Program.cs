@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using YouHaveToSay.Api.Extensions;
@@ -56,7 +57,17 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
-await DevelopmentDataSeeder.SeedAsync(app.Services);
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
+{
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        await using var scope = app.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+    }
+
+    await DevelopmentDataSeeder.SeedAsync(app.Services);
+}
 
 app.Run();
 

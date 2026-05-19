@@ -11,6 +11,9 @@ import '../../features/auth/domain/auth_repository.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/polls/data/polls_repository_impl.dart';
 import '../../features/polls/domain/polls_repository.dart';
+import '../../features/comparisons/data/comparison_repository_impl.dart';
+import '../../features/comparisons/domain/comparison_repository.dart';
+import '../../features/comparisons/presentation/bloc/comparison_feed_bloc.dart';
 import '../../features/polls/presentation/bloc/poll_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -44,10 +47,16 @@ Future<void> configureDependencies(AppConfig config) async {
   getIt.registerLazySingleton<PollsRepository>(
     () => PollsRepositoryImpl(dio: getIt()),
   );
+  getIt.registerLazySingleton<ComparisonRepository>(
+    () => ComparisonRepositoryImpl(dio: getIt()),
+  );
   getIt.registerFactory<AuthBloc>(
     () => AuthBloc(authRepository: getIt()),
   );
   getIt.registerFactory<PollBloc>(
     () => PollBloc(pollsRepository: getIt()),
+  );
+  getIt.registerFactory<ComparisonFeedBloc>(
+    () => ComparisonFeedBloc(comparisonRepository: getIt()),
   );
 }

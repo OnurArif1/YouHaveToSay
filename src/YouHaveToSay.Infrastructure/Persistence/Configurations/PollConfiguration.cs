@@ -20,6 +20,11 @@ public class PollConfiguration : IEntityTypeConfiguration<Poll>
             .IsRequired()
             .HasMaxLength(500);
 
+        builder.Property(p => p.Category)
+            .IsRequired()
+            .HasMaxLength(100)
+            .HasDefaultValue(string.Empty);
+
         builder.Property(p => p.CreatedAt)
             .IsRequired();
 
