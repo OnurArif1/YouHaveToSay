@@ -21,15 +21,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
   Future<void> _onStarted(AuthStarted event, Emitter<AuthState> emit) async {
-    final session = await _authRepository.getStoredSession();
-    if (session != null) {
-      emit(state.copyWith(
-        status: AuthStatus.authenticated,
-        email: session.email.isEmpty ? null : session.email,
-      ));
-    } else {
-      emit(state.copyWith(status: AuthStatus.unauthenticated));
-    }
+    // Her açılışta giriş ekranı — kayıtlı token ile otomatik giriş yok
+    await _authRepository.signOut();
+    emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 
   Future<void> _onGoogleSignIn(
