@@ -5,6 +5,25 @@
 - Flutter 3.41+
 - API çalışıyor olmalı (`docker compose up -d` + `dotnet run --project src/YouHaveToSay.Api`)
 
+## Simülatörde Türkçe klavye
+
+iOS Simulator açıkken proje kökünden:
+
+```bash
+./scripts/setup-turkish-keyboard-ios.sh
+```
+
+Bu script:
+- Locale'i `tr_TR` yapar
+- Varsayılan klavyeyi **Türkçe Q** seçer
+- Mac klavyesi eşlemesini kapatır → simülatörün Türkçe ekran klavyesi kullanılır (`ğ`, `ü`, `ş`, `ı`, `ö`, `ç` doğru çalışır)
+
+**Mac klavyesi ile yazmak istersen:**
+1. Sistem Ayarları → Klavye → Giriş Kaynakları → **Türkçe Q** ekle
+2. Simulator menü: **I/O → Keyboard → Connect Hardware Keyboard** ✓
+
+Android için: `./scripts/setup-turkish-keyboard-android.sh` (adb gerekir)
+
 ## Çalıştırma (geliştirme)
 
 Varsayılan olarak **dev auth** açıktır (`USE_DEV_AUTH=true`). Firebase yapılandırması gerekmez; API `dev:uid:email` token formatını kabul eder.

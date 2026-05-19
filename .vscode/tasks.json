@@ -19,6 +19,26 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "setup-turkish-keyboard-ios",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/setup-turkish-keyboard-ios.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "setup-turkish-keyboard-android",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/setup-turkish-keyboard-android.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ]
 }
