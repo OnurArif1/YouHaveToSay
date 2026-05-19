@@ -29,7 +29,7 @@ public static class DependencyInjection
         var firebaseOptions = configuration.GetSection(FirebaseOptions.SectionName).Get<FirebaseOptions>()
             ?? new FirebaseOptions();
 
-        if (firebaseOptions.Enabled)
+        if (ShouldUseFirebaseAdminVerifier(firebaseOptions))
         {
             services.AddSingleton<IFirebaseTokenVerifier, FirebaseTokenVerifier>();
         }
@@ -43,5 +43,66 @@ public static class DependencyInjection
         services.AddScoped<IPollService, PollService>();
 
         return services;
+    }
+
+    private static bool ShouldUseFirebaseAdminVerifier(FirebaseOptions options)
+    {
+        if (options.UseEmulator)
+        {
+            return true;
+        }
+
+        if (!options.Enabled)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(options.CredentialsPath))
+        {
+            return false;
+        }
+
+        return TryResolveCredentialsPath(options.CredentialsPath, out _);
+    }
+
+    internal static bool TryResolveCredentialsPath(string path, out string resolvedPath)
+    {
+        if (Path.IsPathRooted(path) && File.Exists(path))
+        {
+            resolvedPath = path;
+            return true;
+        }
+
+        var candidates = new List<string>
+        {
+            Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, path)),
+            Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path)),
+        };
+
+        // dotnet run: bin/Debug/net9.0 → repo kökü (mobile ile aynı seviye)
+        var dir = AppContext.BaseDirectory;
+        for (var i = 0; i < 8; i++)
+        {
+            candidates.Add(Path.GetFullPath(Path.Combine(dir, path)));
+            var parent = Directory.GetParent(dir);
+            if (parent is null)
+            {
+                break;
+            }
+
+            dir = parent.FullName;
+        }
+
+        foreach (var candidate in candidates.Distinct())
+        {
+            if (File.Exists(candidate))
+            {
+                resolvedPath = candidate;
+                return true;
+            }
+        }
+
+        resolvedPath = string.Empty;
+        return false;
     }
 }

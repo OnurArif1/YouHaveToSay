@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -11,7 +12,7 @@ class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
@@ -19,19 +20,22 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _showEmailLogin = false;
+  bool _isSignUp = false;
+  bool _obscurePassword = true;
+
+  AppConfig get _config => getIt<AppConfig>();
+
+  bool get _useDevAuth => _config.useDevAuth;
+
+  bool get _canUseGoogle => _config.canUseGoogleSignIn;
 
   @override
   void initState() {
     super.initState();
-    // Firebase yoksa e-posta girişi doğrudan göster
     if (_useDevAuth) {
       _showEmailLogin = true;
     }
   }
-  bool _isSignUp = false;
-  bool _obscurePassword = true;
-
-  bool get _useDevAuth => getIt<AppConfig>().useDevAuth;
 
   @override
   void dispose() {
@@ -58,7 +62,45 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _signInWithGoogle() {
+    if (!_canUseGoogle) {
+      _showFirebaseSetupDialog();
+      return;
+    }
     context.read<AuthBloc>().add(const AuthGoogleSignInRequested());
+  }
+
+  void _showFirebaseSetupDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('firebase_setup_title'.tr()),
+        content: SingleChildScrollView(
+          child: Text('firebase_setup_steps'.tr()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(
+                const ClipboardData(
+                  text: 'export PATH="\$PATH:\$HOME/.pub-cache/bin"\n'
+                      'cd mobile && flutterfire configure\n'
+                      '../scripts/apply-ios-google-url-scheme.sh\n'
+                      'flutter run',
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('firebase_setup_copied'.tr())),
+              );
+            },
+            child: Text('firebase_setup_copy'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('ok'.tr()),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -74,11 +116,15 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: IntrinsicHeight(
                   child: BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
-                      if (state.errorMessage != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.errorMessage!.tr())),
-                        );
+                      if (state.errorMessage == null) return;
+                      if (state.errorMessage == 'firebase_not_configured' ||
+                          state.errorMessage == 'google_auth_not_enabled') {
+                        _showFirebaseSetupDialog();
+                        return;
                       }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.errorMessage!.tr())),
+                      );
                     },
                     builder: (context, state) {
                       return Column(
@@ -103,62 +149,74 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                           ),
                           SizedBox(height: 48.h),
+                          _GoogleSignInButton(
+                            isLoading: state.isLoading,
+                            onPressed: _signInWithGoogle,
+                          ),
+                          SizedBox(height: 12.h),
+                          Text(
+                            _canUseGoogle
+                                ? 'google_auth_hint'.tr()
+                                : 'firebase_setup_hint'.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: _canUseGoogle
+                                  ? Colors.grey.shade600
+                                  : Colors.orange.shade800,
+                            ),
+                          ),
                           if (!_useDevAuth) ...[
-                            _GoogleSignInButton(
-                              isLoading: state.isLoading,
-                              onPressed: _signInWithGoogle,
-                            ),
-                            SizedBox(height: 12.h),
-                            Text(
-                              'google_auth_hint'.tr(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
                             SizedBox(height: 24.h),
                             Row(
                               children: [
-                                Expanded(child: Divider(color: Colors.grey.shade400)),
+                                Expanded(
+                                  child: Divider(color: Colors.grey.shade400),
+                                ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 12.w),
                                   child: Text(
                                     'or'.tr(),
-                                    style: TextStyle(color: Colors.grey.shade600),
+                                    style:
+                                        TextStyle(color: Colors.grey.shade600),
                                   ),
                                 ),
-                                Expanded(child: Divider(color: Colors.grey.shade400)),
+                                Expanded(
+                                  child: Divider(color: Colors.grey.shade400),
+                                ),
                               ],
                             ),
                             SizedBox(height: 16.h),
                           ],
-                          TextButton(
-                            onPressed: state.isLoading
-                                ? null
-                                : () => setState(
-                                      () => _showEmailLogin = !_showEmailLogin,
-                                    ),
-                            child: Text(
-                              _showEmailLogin
-                                  ? 'hide_email_login'.tr()
-                                  : 'email_login_option'.tr(),
-                            ),
-                          ),
-                          if (_showEmailLogin || _useDevAuth) ...[
-                            SizedBox(height: 8.h),
-                            if (_useDevAuth)
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 12.h),
-                                child: Text(
-                                  'dev_auth_notice'.tr(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Colors.orange.shade800,
-                                  ),
+                          if (_useDevAuth)
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: Text(
+                                'dev_auth_notice'.tr(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.orange.shade800,
                                 ),
                               ),
+                            ),
+                          if (!_useDevAuth)
+                            TextButton(
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () => setState(
+                                        () =>
+                                            _showEmailLogin = !_showEmailLogin,
+                                      ),
+                              child: Text(
+                                _showEmailLogin
+                                    ? 'hide_email_login'.tr()
+                                    : 'email_login_option'.tr(),
+                              ),
+                            ),
+                          if (_showEmailLogin || _useDevAuth) ...[
+                            SizedBox(height: 8.h),
                             Form(
                               key: _formKey,
                               child: Column(
@@ -318,8 +376,8 @@ class _GoogleSignInButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.mail_outline,
-                  size: 24.sp,
+                  Icons.g_mobiledata,
+                  size: 28.sp,
                   color: Colors.red.shade600,
                 ),
                 SizedBox(width: 12.w),

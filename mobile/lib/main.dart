@@ -13,32 +13,21 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
 
   final config = AppConfig.fromEnvironment();
-  final firebaseReady = isFirebaseConfigured;
-
-  // firebase_options.dart doldurulmamışsa çökme yerine dev auth'a düş
-  final effectiveConfig = AppConfig(
-    apiBaseUrl: config.apiBaseUrl,
-    useDevAuth: config.useDevAuth || !firebaseReady,
-  );
+  final firebaseReady = isFirebaseReady;
 
   if (firebaseReady) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    debugPrint('[YouHaveToSay] Firebase başlatıldı.');
+    debugPrint('[YouHaveToSay] Firebase başlatıldı — gerçek Google girişi aktif.');
   } else {
     debugPrint(
-      '[YouHaveToSay] Firebase yapılandırılmamış (REPLACE_ME). '
-      'Google girişi için: cd mobile && flutterfire configure',
+      '[YouHaveToSay] Firebase yapılandırılmamış. '
+      'Gerçek Google hesap seçici için: ./scripts/setup-google-signin.sh',
     );
   }
 
-  if (effectiveConfig.useDevAuth) {
-    debugPrint(
-      '[YouHaveToSay] Dev/e-posta giriş modu. '
-      'Google için: flutter run (flutterfire configure sonrası)',
-    );
-  }
+  final effectiveConfig = config.copyWith(firebaseConfigured: firebaseReady);
 
   await configureDependencies(effectiveConfig);
 

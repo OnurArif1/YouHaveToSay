@@ -20,7 +20,8 @@ class AuthRepositoryImpl implements AuthRepository {
         _tokenStorage = tokenStorage,
         _firebaseTokenProvider = firebaseTokenProvider,
         _config = config,
-        _googleAuthService = googleAuthService ?? GoogleAuthService();
+        _googleAuthService = googleAuthService ??
+            GoogleAuthService(serverClientId: config.googleWebClientId);
 
   final Dio _dio;
   final AuthTokenStorage _tokenStorage;
@@ -32,6 +33,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> signInWithGoogle() async {
     if (_config.useDevAuth) {
       throw UnsupportedError('google_auth_requires_firebase');
+    }
+    if (!_config.firebaseConfigured) {
+      throw const FirebaseNotConfiguredException();
     }
 
     await _googleAuthService.signIn();

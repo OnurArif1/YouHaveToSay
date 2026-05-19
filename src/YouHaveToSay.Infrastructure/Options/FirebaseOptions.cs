@@ -12,4 +12,11 @@ public class FirebaseOptions
     public string? ProjectId { get; set; }
 
     public string? CredentialsPath { get; set; }
+
+    /// <summary>
+    /// Yerel Firebase Auth Emulator (geliştirme).
+    /// </summary>
+    public bool UseEmulator { get; set; }
+
+    public string EmulatorHost { get; set; } = "localhost:9099";
 }

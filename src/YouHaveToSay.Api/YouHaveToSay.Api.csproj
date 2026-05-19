@@ -20,4 +20,8 @@
     <ProjectReference Include="..\YouHaveToSay.Application\YouHaveToSay.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\firebase-credentials.json" Link="firebase-credentials.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\firebase-credentials.json')" />
+  </ItemGroup>
+
 </Project>

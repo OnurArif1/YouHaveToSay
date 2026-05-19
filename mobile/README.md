@@ -26,18 +26,26 @@ Android için: `./scripts/setup-turkish-keyboard-android.sh` (adb gerekir)
 
 ## Google ile giriş (varsayılan)
 
-Ana ekranda **「Google ile devam et」** — Gmail hesabını seçersin, e-posta yazmana gerek yok.
+Ana ekranda **「Google ile devam et」** — Gmail hesabını seçersin.
 
-### Firebase kurulumu (bir kez)
+### Geliştirme (otomatik — Firebase Console gerekmez)
 
-1. [Firebase Console](https://console.firebase.google.com/) → proje oluştur
-2. **Authentication** → **Sign-in method** → **Google** → Etkinleştir
-3. `cd mobile && flutterfire configure`
-4. API tarafında `Firebase:Enabled: true` + service account JSON
+Debug modda uygulama **Firebase Auth Emulator** kullanır. Proje kökünden:
 
 ```bash
-flutter run
+./scripts/start-firebase-emulator.sh   # terminal 1
+dotnet run --project src/YouHaveToSay.Api   # terminal 2
+cd mobile && flutter run               # terminal 3
 ```
+
+Veya tek komut: `./scripts/start-dev-stack.sh` (PostgreSQL + emulator + API)
+
+### Production (gerçek Firebase)
+
+1. [Firebase Console](https://console.firebase.google.com/) → proje
+2. Authentication → Google → Etkinleştir
+3. `flutterfire configure`
+4. `flutter run --release`
 
 Geliştirici e-posta girişi: `flutter run --dart-define=USE_DEV_AUTH=true`
 

@@ -1,6 +1,6 @@
 import '../../firebase_options.dart';
 
-bool get isFirebaseConfigured {
+bool get isProductionFirebaseConfigured {
   try {
     final options = DefaultFirebaseOptions.currentPlatform;
     return options.apiKey.isNotEmpty && !options.apiKey.contains('REPLACE');
@@ -8,3 +8,5 @@ bool get isFirebaseConfigured {
     return false;
   }
 }
+
+bool get isFirebaseReady => isProductionFirebaseConfigured;

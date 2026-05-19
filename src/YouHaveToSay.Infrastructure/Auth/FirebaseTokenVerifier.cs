@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using YouHaveToSay.Application.Auth.Interfaces;
 using YouHaveToSay.Application.Auth.Models;
 using YouHaveToSay.Application.Common.Exceptions;
+using YouHaveToSay.Infrastructure;
 using YouHaveToSay.Infrastructure.Options;
 
 namespace YouHaveToSay.Infrastructure.Auth;
@@ -64,16 +65,33 @@ public class FirebaseTokenVerifier(IOptions<FirebaseOptions> options) : IFirebas
                 return;
             }
 
-            var appOptions = new AppOptions();
-
-            if (!string.IsNullOrWhiteSpace(_options.CredentialsPath))
+            if (_options.UseEmulator)
             {
-                appOptions.Credential = GoogleCredential.FromFile(_options.CredentialsPath);
+                Environment.SetEnvironmentVariable(
+                    "FIREBASE_AUTH_EMULATOR_HOST",
+                    _options.EmulatorHost);
             }
 
-            if (!string.IsNullOrWhiteSpace(_options.ProjectId))
+            var appOptions = new AppOptions
             {
-                appOptions.ProjectId = _options.ProjectId;
+                ProjectId = _options.ProjectId ?? "demo-youhavetosay",
+            };
+
+            if (_options.UseEmulator)
+            {
+                // Admin SDK Credential zorunlu; emülatörde gerçek anahtar gerekmez.
+                appOptions.Credential = GoogleCredential.FromAccessToken("owner");
+            }
+            else if (!string.IsNullOrWhiteSpace(_options.CredentialsPath) &&
+                     DependencyInjection.TryResolveCredentialsPath(
+                         _options.CredentialsPath, out var credentialsFile))
+            {
+                appOptions.Credential = GoogleCredential.FromFile(credentialsFile);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    "Firebase production modu için CredentialsPath yapılandırılmalı.");
             }
 
             FirebaseApp.Create(appOptions);

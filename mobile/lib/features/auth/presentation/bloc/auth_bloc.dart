@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/google_auth_service.dart';
@@ -46,7 +47,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         isLoading: false,
         errorMessage: 'google_auth_requires_firebase',
       ));
-    } catch (_) {
+    } on FirebaseNotConfiguredException {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'firebase_not_configured',
+      ));
+    } on GoogleAuthNotEnabledException {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'google_auth_not_enabled',
+      ));
+    } catch (e, st) {
+      debugPrint('[Auth] Google sign-in failed: $e');
+      debugPrint('$st');
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
         isLoading: false,

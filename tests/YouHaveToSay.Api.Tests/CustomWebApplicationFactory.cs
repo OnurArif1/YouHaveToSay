@@ -8,13 +8,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Firebase:Enabled"] = "false",
+                ["Firebase:UseEmulator"] = "false",
                 ["Jwt:Secret"] = "YouHaveToSay_Test_Secret_Key_Min32Chars!!",
                 ["Jwt:Issuer"] = "YouHaveToSay",
                 ["Jwt:Audience"] = "YouHaveToSay",
