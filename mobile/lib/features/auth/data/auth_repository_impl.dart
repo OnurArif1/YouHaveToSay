@@ -6,6 +6,7 @@ import '../../../core/network/auth_token_storage.dart';
 import '../../../core/network/firebase_token_provider.dart';
 import '../domain/auth_repository.dart';
 import '../domain/models/auth_session.dart';
+import 'google_auth_service.dart';
 import 'models/auth_response_dto.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -14,15 +15,30 @@ class AuthRepositoryImpl implements AuthRepository {
     required AuthTokenStorage tokenStorage,
     required FirebaseTokenProvider firebaseTokenProvider,
     required AppConfig config,
+    GoogleAuthService? googleAuthService,
   })  : _dio = dio,
         _tokenStorage = tokenStorage,
         _firebaseTokenProvider = firebaseTokenProvider,
-        _config = config;
+        _config = config,
+        _googleAuthService = googleAuthService ?? GoogleAuthService();
 
   final Dio _dio;
   final AuthTokenStorage _tokenStorage;
   final FirebaseTokenProvider _firebaseTokenProvider;
   final AppConfig _config;
+  final GoogleAuthService _googleAuthService;
+
+  @override
+  Future<AuthSession> signInWithGoogle() async {
+    if (_config.useDevAuth) {
+      throw UnsupportedError('google_auth_requires_firebase');
+    }
+
+    await _googleAuthService.signIn();
+    final firebaseToken = await _firebaseTokenProvider.getIdToken();
+    final email = FirebaseAuth.instance.currentUser?.email ?? '';
+    return _exchangeToken(firebaseToken, email);
+  }
 
   @override
   Future<AuthSession> signIn({
@@ -74,7 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return AuthSession(
       accessToken: dto.accessToken,
-      email: dto.user.email,
+      email: dto.user.email.isNotEmpty ? dto.user.email : email,
       userId: dto.user.id,
     );
   }
@@ -83,6 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signOut() async {
     await _tokenStorage.clear();
     if (!_config.useDevAuth) {
+      await _googleAuthService.signOut();
       await FirebaseAuth.instance.signOut();
     }
   }

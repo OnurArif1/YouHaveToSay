@@ -24,9 +24,24 @@ Bu script:
 
 Android için: `./scripts/setup-turkish-keyboard-android.sh` (adb gerekir)
 
-## Çalıştırma (geliştirme)
+## Google ile giriş (varsayılan)
 
-Varsayılan olarak **dev auth** açıktır (`USE_DEV_AUTH=true`). Firebase yapılandırması gerekmez; API `dev:uid:email` token formatını kabul eder.
+Ana ekranda **「Google ile devam et」** — Gmail hesabını seçersin, e-posta yazmana gerek yok.
+
+### Firebase kurulumu (bir kez)
+
+1. [Firebase Console](https://console.firebase.google.com/) → proje oluştur
+2. **Authentication** → **Sign-in method** → **Google** → Etkinleştir
+3. `cd mobile && flutterfire configure`
+4. API tarafında `Firebase:Enabled: true` + service account JSON
+
+```bash
+flutter run
+```
+
+Geliştirici e-posta girişi: `flutter run --dart-define=USE_DEV_AUTH=true`
+
+## Çalıştırma (geliştirme)
 
 ```bash
 cd mobile

@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-
 class AppConfig {
   const AppConfig({
     required this.apiBaseUrl,
@@ -15,10 +13,9 @@ class AppConfig {
     const envUrl = String.fromEnvironment('API_BASE_URL');
     const envUseDevAuth = String.fromEnvironment('USE_DEV_AUTH');
 
-    // Debug build'lerde varsayılan: Firebase olmadan dev token
-    final useDevAuth = envUseDevAuth.isEmpty
-        ? kDebugMode
-        : envUseDevAuth == 'true';
+    // Varsayılan: Google Sign-In (Firebase). Dev token için: USE_DEV_AUTH=true
+    final useDevAuth =
+        envUseDevAuth.isNotEmpty && envUseDevAuth == 'true';
 
     final defaultHost = Platform.isAndroid ? '10.0.2.2' : 'localhost';
     final baseUrl =

@@ -20,7 +20,7 @@ class YouHaveToSayApp extends StatelessWidget {
       minTextAdapt: true,
       builder: (context, child) {
         return MaterialApp(
-          title: 'You Have To Say',
+          title: 'app_name'.tr(),
           theme: AppTheme.light(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/google_auth_service.dart';
 import '../../domain/auth_repository.dart';
 
 part 'auth_event.dart';
@@ -11,6 +12,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : _authRepository = authRepository,
         super(const AuthState()) {
     on<AuthStarted>(_onStarted);
+    on<AuthGoogleSignInRequested>(_onGoogleSignIn);
     on<AuthSignInRequested>(_onSignIn);
     on<AuthSignUpRequested>(_onSignUp);
     on<AuthSignOutRequested>(_onSignOut);
@@ -27,6 +29,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     } else {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
+    }
+  }
+
+  Future<void> _onGoogleSignIn(
+    AuthGoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true, clearError: true));
+    try {
+      final session = await _authRepository.signInWithGoogle();
+      emit(state.copyWith(
+        status: AuthStatus.authenticated,
+        isLoading: false,
+        email: session.email,
+        clearError: true,
+      ));
+    } on AuthCancelledException {
+      emit(state.copyWith(isLoading: false, clearError: true));
+    } on UnsupportedError {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'google_auth_requires_firebase',
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        isLoading: false,
+        errorMessage: 'google_auth_error',
+      ));
     }
   }
 
