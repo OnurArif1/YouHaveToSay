@@ -111,14 +111,7 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: Colors.transparent,
       body: FeedBackground(
         child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: BlocConsumer<AuthBloc, AuthState>(
+        child: BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
                       if (state.errorMessage == null) return;
                       if (state.errorMessage == 'firebase_not_configured' ||
@@ -132,9 +125,15 @@ class _AuthScreenState extends State<AuthScreen> {
                     },
                     builder: (context, state) {
                       return Column(
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(height: 56.h),
                           Text(
                             'app_name'.tr(),
                             textAlign: TextAlign.center,
@@ -311,8 +310,14 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                             ),
                           ],
-                          const Spacer(),
-                          Row(
+                                ],
+                              ),
+                            ),
+                          ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 16.h),
+                            child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
@@ -341,16 +346,11 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 16.h),
+                          ),
                         ],
                       );
                     },
                   ),
-                ),
-              ),
-            );
-          },
-        ),
       ),
       ),
     );
