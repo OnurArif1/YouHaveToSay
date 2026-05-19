@@ -256,6 +256,6 @@ public class ComparisonService(AppDbContext dbContext, ICurrentUserService curre
         Id = option.Id,
         TextTr = option.OptionTextTr,
         TextEn = option.OptionTextEn,
-        ImageUrl = null
+        ImageUrl = option.ImageUrl
     };
 }

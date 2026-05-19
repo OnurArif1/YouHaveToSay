@@ -21,7 +21,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Jwt:Audience"] = "YouHaveToSay",
                 ["Jwt:ExpirationMinutes"] = "60",
                 ["ConnectionStrings:DefaultConnection"] =
-                    "Host=localhost;Port=5432;Database=YouHaveToSay;Username=postgres;Password=postgres"
+                    "Host=localhost;Port=5432;Database=YouHaveToSay;Username=postgres;Password=postgres",
+                ["Backoffice:AdminEmails:0"] = "admin@youhavetosay.com",
+                ["Backoffice:AdminEmails:1"] = "cmp@example.com"
             });
         });
     }

@@ -14,6 +14,9 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
         }
     }
 
+    public string? Email =>
+        httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
+
     public bool IsAuthenticated =>
         httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true;
 }

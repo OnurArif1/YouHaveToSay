@@ -12,6 +12,8 @@ public class PollOption : AuditableEntity
 
     public string OptionTextEn { get; set; } = null!;
 
+    public string? ImageUrl { get; set; }
+
     public Poll Poll { get; set; } = null!;
 
     public ICollection<Vote> Votes { get; set; } = new List<Vote>();

@@ -20,6 +20,9 @@ public class PollOptionConfiguration : IEntityTypeConfiguration<PollOption>
             .IsRequired()
             .HasMaxLength(300);
 
+        builder.Property(o => o.ImageUrl)
+            .HasMaxLength(2048);
+
         builder.Property(o => o.CreatedAt)
             .IsRequired();
 

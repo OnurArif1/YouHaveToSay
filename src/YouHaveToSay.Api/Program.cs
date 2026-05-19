@@ -40,7 +40,15 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddBackofficeAuthorization(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BackofficeDev", policy =>
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -49,6 +57,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseYouHaveToSaySwagger();
+    app.UseCors("BackofficeDev");
 }
 
 app.UseAuthentication();

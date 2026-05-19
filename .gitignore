@@ -21,6 +21,10 @@ firebase-credentials.json
 ## OS
 .DS_Store
 
+## Backoffice (Vue)
+backoffice/node_modules/
+backoffice/dist/
+
 ## Flutter
 mobile/.dart_tool/
 mobile/build/

@@ -32,6 +32,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
     private static HttpStatusCode MapStatusCode(AppException ex) => ex switch
     {
         UnauthorizedAppException => HttpStatusCode.Unauthorized,
+        ForbiddenAppException => HttpStatusCode.Forbidden,
         NotFoundAppException => HttpStatusCode.NotFound,
         ConflictAppException => HttpStatusCode.Conflict,
         BadRequestAppException => HttpStatusCode.BadRequest,

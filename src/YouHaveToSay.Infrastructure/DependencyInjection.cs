@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using YouHaveToSay.Application.Auth.Interfaces;
+using YouHaveToSay.Application.Backoffice.Interfaces;
 using YouHaveToSay.Application.Comparisons.Interfaces;
 using YouHaveToSay.Application.Polls.Interfaces;
 using YouHaveToSay.Infrastructure.Auth;
+using YouHaveToSay.Infrastructure.Backoffice;
 using YouHaveToSay.Infrastructure.Comparisons;
 using YouHaveToSay.Infrastructure.Options;
 using YouHaveToSay.Infrastructure.Persistence;
@@ -33,7 +35,9 @@ public static class DependencyInjection
 
         if (ShouldUseFirebaseAdminVerifier(firebaseOptions))
         {
-            services.AddSingleton<IFirebaseTokenVerifier, FirebaseTokenVerifier>();
+            services.AddSingleton<DevelopmentFirebaseTokenVerifier>();
+            services.AddSingleton<FirebaseTokenVerifier>();
+            services.AddSingleton<IFirebaseTokenVerifier, CompositeFirebaseTokenVerifier>();
         }
         else
         {
@@ -44,6 +48,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
         services.AddScoped<IComparisonService, ComparisonService>();
+        services.AddScoped<IBackofficeComparisonService, BackofficeComparisonService>();
+        services.AddScoped<IBackofficeUsersService, BackofficeUsersService>();
 
         return services;
     }
